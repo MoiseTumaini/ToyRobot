@@ -8,18 +8,17 @@ public class Robot {
     private static int MIN_Y = -200, MAX_Y = 200;
     private static int MIN_X = -100, MAX_X = 100;
 
-    private int positionX;
-    private int positionY;
+    private static final Position CENTRE = new Position(0,0)
+
+    private Position position;
     private String currentDirection;
     private String status;
     private String name;
-    private String testing;
 
     public Robot(String name) {
         this.name = name;
         this.status = "Ready";
-        this.positionX = 0;
-        this.positionY = 0;
+        this.position = CENTRE;
         this.currentDirection = "NORTH";
     }
 
@@ -28,11 +27,11 @@ public class Robot {
     }
 
     public int getPositionX() {
-        return this.positionX;
+        return this.position.getX();
     }
 
     public int getPositionY() {
-        return this.positionY;
+        return this.position.getY();
     }
 
     public String getCurrentDirection() {
@@ -84,16 +83,15 @@ public class Robot {
     }
 
     private boolean updatePosition(int nrSteps){
-        int newY = positionY;
-        int newX = positionX;
+        int newY = this.position.getY();
+        int newX = this.position.getX();
 
         if ("NORTH".equals(currentDirection)) {
             newY = newY + nrSteps;
         }
 
         if (isPositionAllowed(newX, newY)){
-            positionX = newX;
-            positionY = newY;
+            this.position = new Position(newX, newY);
             return true;
         }
         return false;
@@ -110,8 +108,8 @@ public class Robot {
 
     @Override
     public String toString() {
-        return "[" + positionX + "," + positionY + "] "
-                + "{" + currentDirection + "} "
-                + name + "> " + status;
+        return "[" + this.position.getX() + "," + this.position.getY() + "] "
+                + "{" + this.currentDirection + "} "
+                + this.name + "> " + this.status;
     }
 }
