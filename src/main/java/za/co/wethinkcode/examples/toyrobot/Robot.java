@@ -1,14 +1,16 @@
 package za.co.wethinkcode.examples.toyrobot;
 
+import java.awt.*;
 import java.util.List;
 
 public class Robot {
     private static final List<String> VALID_COMMANDS = List.of("off", "help", "forward");
 
-    private static int MIN_Y = -200, MAX_Y = 200;
-    private static int MIN_X = -100, MAX_X = 100;
+    private final Position TOP_LEFT = new Position(-100,100);
+    private final Position BOTTOM_RIGHT = new Position(100,-200);
 
-    private static final Position CENTRE = new Position(0,0);
+    public static final Position CENTRE = new Position(0,0);
+
 
     private Position position;
     private String currentDirection;
@@ -26,18 +28,17 @@ public class Robot {
         return this.status;
     }
 
-    public int getPositionX() {
-        return this.position.getX();
-    }
-
-    public int getPositionY() {
-        return this.position.getY();
+    public Position getPosition(){
+        return this.position;
     }
 
     public String getCurrentDirection() {
         return this.currentDirection;
     }
 
+    public void turnTo(Direction newdirection){
+        this.currentDirection = String.valueOf(newdirection);
+    }
     public boolean isValidCommand(String commandInput){
         String[] args = commandInput.strip().split(" ");
         String command = args[0].trim().toLowerCase();
@@ -76,12 +77,6 @@ public class Robot {
                 "FORWARD - move forward by specified number of steps, e.g. 'FORWARD 10'";
     }
 
-
-    private boolean isPositionAllowed(int newX, int newY){
-        return MIN_X <= newX && newX <= MAX_X
-                && MIN_Y <= newY && newY <= MAX_Y;
-    }
-
     private boolean updatePosition(int nrSteps){
         int newY = this.position.getY();
         int newX = this.position.getX();
@@ -90,13 +85,14 @@ public class Robot {
             newY = newY + nrSteps;
         }
 
-        if (isPositionAllowed(newX, newY)){
-            this.position = new Position(newX, newY);
+        Position newPosition = new Position(newX,newY);
+
+        if (newPosition.isIn(TOP_LEFT,BOTTOM_RIGHT)){
+            this.position = newPosition;
             return true;
         }
         return false;
     }
-
 
     private String doForward(int nrSteps){
         if (updatePosition(nrSteps)){
