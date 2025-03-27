@@ -9,14 +9,12 @@ class RobotTest {
     @Test
     void isValidCommand() {
         Robot robot = new Robot("CrashTestDummy");
-        assertTrue(robot.isValidCommand("forward"));
-        assertTrue(robot.isValidCommand("FORWARD"));
-        assertTrue(robot.isValidCommand("forward 10"));
-        assertTrue(robot.isValidCommand("off"));
-        assertTrue(robot.isValidCommand("off "));
-        assertTrue(robot.isValidCommand("help"));
-        assertTrue(robot.isValidCommand(" HELP  "));
-        assertFalse(robot.isValidCommand("random"));
+
+        assertThrows(IllegalArgumentException.class, () -> robot.handleCommand(Command.create("forwar 10")));
+        assertTrue(robot.handleCommand(Command.create("FORWARD 10")));
+        assertTrue(robot.handleCommand(Command.create("off")));
+        assertTrue(robot.handleCommand(Command.create("help")));
+        assertTrue(robot.handleCommand(Command.create("  HELP  ")));
     }
     @Test
     void initialPosition() {

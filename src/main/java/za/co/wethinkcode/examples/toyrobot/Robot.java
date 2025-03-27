@@ -1,8 +1,6 @@
 package za.co.wethinkcode.examples.toyrobot;
 
-import java.awt.*;
 import java.util.List;
-import java.util.concurrent.ConcurrentMap;
 
 public class Robot {
     private static final List<String> VALID_COMMANDS = List.of("off", "help", "forward");
@@ -29,6 +27,10 @@ public class Robot {
         return this.status;
     }
 
+    public void setStatus(String status) {
+        this.status = status;
+    }
+
     public Position getPosition(){
         return this.position;
     }
@@ -40,6 +42,7 @@ public class Robot {
     public void turnTo(Direction newdirection){
         this.currentDirection = newdirection;
     }
+
     public boolean isValidCommand(String commandInput){
         String[] args = commandInput.strip().split(" ");
         String command = args[0].trim().toLowerCase();
@@ -47,22 +50,7 @@ public class Robot {
     }
 
     public boolean handleCommand(Command command){
-        String commandName = command.getName();
-        switch (commandName){
-            case "off":
-                status = "Shutting down";
-                break;
-            case "help":
-                status = doHelp();
-                break;
-            case "forward":
-                String argument = command.getArgument();
-                status = doForward(Integer.parseInt(argument));
-                break;
-            default:
-                status = "I am not programmed for: " + command;
-        }
-        return true;
+        return command.execute(this);
     }
 
     private String doHelp() {
@@ -72,7 +60,7 @@ public class Robot {
                 "FORWARD - move forward by specified number of steps, e.g. 'FORWARD 10'";
     }
 
-    private boolean updatePosition(int nrSteps){
+    public boolean updatePosition(int nrSteps){
         int newY = this.position.getY();
         int newX = this.position.getX();
 
