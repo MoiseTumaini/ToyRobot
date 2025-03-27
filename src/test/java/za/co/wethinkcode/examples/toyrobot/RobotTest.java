@@ -22,7 +22,7 @@ class RobotTest {
     void initialPosition() {
         Robot robot = new Robot("CrashTestDummy");
         assertEquals(Robot.CENTRE, robot.getPosition());
-        assertEquals("NORTH", robot.getCurrentDirection());
+        assertEquals(Direction.NORTH, robot.getCurrentDirection());
     }
     @Test
     void dump() {
@@ -33,13 +33,15 @@ class RobotTest {
     @Test
     void shutdown() {
         Robot robot = new Robot("CrashTestDummy");
-        assertTrue(robot.handleCommand("off"));
+        Command command = new ShutdownCommand();
+        assertTrue(robot.handleCommand(command));
     }
 
     @Test
     void forward() {
         Robot robot = new Robot("CrashTestDummy");
-        assertTrue(robot.handleCommand("forward 10"));
+        ForwardCommand command = new ForwardCommand("10");
+        assertTrue(robot.handleCommand(command));
         Position expectedPosition = new Position(Robot.CENTRE.getX(), Robot.CENTRE.getY() + 10);
         assertEquals(expectedPosition, robot.getPosition());
         assertEquals("Moved forward by 10 steps.", robot.getStatus());
@@ -47,15 +49,16 @@ class RobotTest {
     @Test
     void forwardforward() {
         Robot robot = new Robot("CrashTestDummy");
-        assertTrue(robot.handleCommand("forward 10"));
-        assertTrue(robot.handleCommand("forward 5"));
+        Command command = new ForwardCommand("10");
+        assertTrue(robot.handleCommand(command));
+        assertTrue(robot.handleCommand(new ForwardCommand("5")));
         assertEquals("Moved forward by 5 steps.", robot.getStatus());
     }
 
     @Test
     void tooFarForward() {
         Robot robot = new Robot("CrashTestDummy");
-        assertTrue(robot.handleCommand("forward 1000"));
+        assertTrue(robot.handleCommand(new ForwardCommand("1000")));
         assertEquals(Robot.CENTRE,robot.getPosition());
         assertEquals("Sorry, I cannot go outside my safe zone.", robot.getStatus());
     }
@@ -63,7 +66,8 @@ class RobotTest {
     @Test
     void help() {
         Robot robot = new Robot("CrashTestDummy");
-        assertTrue(robot.handleCommand("help"));
+        Command command = new HelpCommand();
+        assertTrue(robot.handleCommand(command));
         assertEquals("I can understand these commands:\n" +
                 "OFF  - Shut down robot\n" +
                 "HELP - provide information about commands\n" +

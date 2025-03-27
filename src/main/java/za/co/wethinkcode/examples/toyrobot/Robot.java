@@ -2,6 +2,7 @@ package za.co.wethinkcode.examples.toyrobot;
 
 import java.awt.*;
 import java.util.List;
+import java.util.concurrent.ConcurrentMap;
 
 public class Robot {
     private static final List<String> VALID_COMMANDS = List.of("off", "help", "forward");
@@ -13,7 +14,7 @@ public class Robot {
 
 
     private Position position;
-    private String currentDirection;
+    private Direction currentDirection;
     private String status;
     private String name;
 
@@ -21,7 +22,7 @@ public class Robot {
         this.name = name;
         this.status = "Ready";
         this.position = CENTRE;
-        this.currentDirection = "NORTH";
+        this.currentDirection = Direction.NORTH;
     }
 
     public String getStatus() {
@@ -32,12 +33,12 @@ public class Robot {
         return this.position;
     }
 
-    public String getCurrentDirection() {
+    public Direction getCurrentDirection() {
         return this.currentDirection;
     }
 
     public void turnTo(Direction newdirection){
-        this.currentDirection = String.valueOf(newdirection);
+        this.currentDirection = newdirection;
     }
     public boolean isValidCommand(String commandInput){
         String[] args = commandInput.strip().split(" ");
@@ -45,16 +46,9 @@ public class Robot {
         return VALID_COMMANDS.contains(command);
     }
 
-    public boolean handleCommand(String commandInput){
-        if (!isValidCommand(commandInput)) {
-            status = "I am not programmed to: " + commandInput;
-            return false;
-        }
-
-        String[] args = commandInput.strip().split(" ");
-        String command = args[0].trim().toLowerCase();
-
-        switch (command){
+    public boolean handleCommand(Command command){
+        String commandName = command.getName();
+        switch (commandName){
             case "off":
                 status = "Shutting down";
                 break;
@@ -62,7 +56,8 @@ public class Robot {
                 status = doHelp();
                 break;
             case "forward":
-                status = doForward(Integer.parseInt(args[1]));
+                String argument = command.getArgument();
+                status = doForward(Integer.parseInt(argument));
                 break;
             default:
                 status = "I am not programmed for: " + command;
@@ -81,7 +76,7 @@ public class Robot {
         int newY = this.position.getY();
         int newX = this.position.getX();
 
-        if ("NORTH".equals(currentDirection)) {
+        if (getCurrentDirection().equals(Direction.NORTH)){
             newY = newY + nrSteps;
         }
 
